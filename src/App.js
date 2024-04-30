@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './App.css';
 import { BrowserRouter as Router } from 'react-router-dom';
 import Tab from './components/tab';
@@ -17,7 +17,7 @@ function App() {
 
 const AppContent = () => {
   const [activeTab, setActiveTab] = useState('');
-  const { user, login, logout } = useUser(); // Access user context
+  const { user } = useUser(); // Access user context
 
   
   return (

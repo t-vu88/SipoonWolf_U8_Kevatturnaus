@@ -1,14 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useUser } from './UserContext';
-const saveToLocalStorage = (key, data) => {
-  localStorage.setItem(key, JSON.stringify(data));
-};
-
-// Function to retrieve data from local storage
-const getFromLocalStorage = (key) => {
-  const data = localStorage.getItem(key);
-  return data ? JSON.parse(data) : null;
-};
 const Lauantai = () => {
   const { user } = useUser(); // Get the user from the UserContext
   const isAdmin = user && user.isAdmin; // Check if the user is an admin
@@ -44,7 +35,7 @@ const Lauantai = () => {
     ]
   });
 
-  const [teams, setTeams] = useState({
+  const [teams] = useState({
     u8lohkoa: ["Wolf Musta", "Salamat White", "Hunters Blue", "HJK Blue"],
     u8lohkob: ["Wolf Keltainen", "Salamat Blue", "Hunters Yellow", "HJK White"],
     u7: ["Wolf", "Haki Blue", "HIFK Red", "Haki Black", "Hunters U7"]

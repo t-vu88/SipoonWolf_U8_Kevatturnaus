@@ -33,7 +33,7 @@ const Sunnuntai = () => {
     ]
 });
 
-const [teams, setTeams] = useState({
+const [teams] = useState({
   u8lohkoa: ["Woft Musta", "HIFK Red", "HJK Black", "Viikingit Red"],
   u8lohkob: ["Wolf Keltainen", "HIFK White", "HJK Blue", "Viikingit White"],
   u7: ["Wolf", "Haki White", "HIFK White", "HIFK Blue"]
