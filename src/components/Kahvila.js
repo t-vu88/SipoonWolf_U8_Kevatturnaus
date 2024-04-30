@@ -23,6 +23,12 @@ const Kahvila = () => {
     <div>
       <h3 style={paragraphStyle}>Lämäritutka</h3>
     </div>
+    <div>
+      <h3 style={paragraphStyle}>Arpajaiset</h3>
+    </div>
+    <div>
+      <h3 style={paragraphStyle}>Sponsorit</h3>
+    </div>
     </div>
   );
 };
