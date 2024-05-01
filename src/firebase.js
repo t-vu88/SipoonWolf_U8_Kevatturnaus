@@ -1,7 +1,7 @@
 
 
 import { initializeApp } from "firebase/app"; // Import only the initializeApp function
-import { getDatabase } from "firebase/database"; // Import getDatabase function
+import { getDatabase, ref } from "firebase/database"; // Import getDatabase function
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -20,4 +20,6 @@ const firebaseApp = initializeApp(firebaseConfig);
 
 // Access Firebase Realtime Database
 export const database = getDatabase(firebaseApp); // Use getDatabase function to initialize the database
+
+export const gamesRef = ref(database, 'games');
 
