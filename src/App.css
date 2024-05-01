@@ -198,7 +198,7 @@ li {
 .ranking-table {
   width: 100%;
   border-collapse: collapse; 
-  border: 1px dotted #F0AE2E ;
+  border: 1px double white ;
 }
 
 .ranking-table th,

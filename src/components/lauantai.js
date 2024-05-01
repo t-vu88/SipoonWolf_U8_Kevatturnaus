@@ -1,39 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useUser } from './UserContext';
+import { database } from '../firebase';
 const Lauantai = () => {
-  const { user } = useUser(); // Get the user from the UserContext
+  const { user } = useUser(); 
   const isAdmin = user && user.isAdmin; // Check if the user is an admin
 
-  const [games, setGames] = useState({
-    u8lohkoa: [
-      { id: 1, time: '10:00', team1: 'Wolf Musta', team2: 'Salamat White', result1: 0, result2: 0 },
-      { id: 2, time: '10:40', team1: 'Hunters Blue', team2: 'HJK Blue', result1: 0, result2: 0 },
-      { id: 3, time: '11:20', team1: 'Wolf Musta', team2: 'Hunters Blue', result1: 0, result2: 0 },
-      { id: 4, time: '12:10', team1: 'Salamat White', team2: 'HJK Blue', result1: 0, result2: 0 },
-      { id: 5, time: '12:50', team1: 'Wolf Musta', team2: 'HJK Blue', result1: 0, result2: 0 },
-      { id: 6, time: '13:40', team1: 'Salamat White', team2: 'Hunters Blue', result1: 0, result2: 0 }
-    ],
-    u8lohkob: [
-      { id: 1, time: '10:00', team1: 'Wolf Keltainen', team2: 'Salamat Blue', result1: 0, result2: 0 },
-      { id: 2, time: '10:40', team1: 'Hunters Yellow', team2: 'HJK White', result1: 0, result2: 0 },
-      { id: 3, time: '11:20', team1: 'Wolf Keltainen', team2: 'Hunters Yellow', result1: 0, result2: 0 },
-      { id: 4, time: '12:10', team1: 'Salamat Blue', team2: 'HJK White', result1: 0, result2: 0 },
-      { id: 5, time: '12:50', team1: 'Wolf Keltainen', team2: 'HJK White', result1: 0, result2: 0 },
-      { id: 6, time: '13:40', team1: 'Salamat Blue', team2: 'Hunter Yellow', result1: 0, result2: 0 }
-    ],
-    u7: [
-      { id: 1, time: '10:00', team1: 'Wolf', team2: 'Hunters U7', result1: 0, result2: 0 },
-      { id: 2, time: '10:40', team1: 'HIFK Red', team2: 'Haki Blue', result1: 0, result2: 0 },
-      { id: 3, time: '11:20', team1: 'Haki Blue', team2: 'Haki Black', result1: 0, result2: 0 },
-      { id: 4, time: '12:10', team1: 'HIFK Red', team2: 'Hunters U7', result1: 0, result2: 0 },
-      { id: 5, time: '12:50', team1: 'Wolf ', team2: 'HIFK Red', result1: 0, result2: 0 },
-      { id: 6, time: '13:40', team1: 'Hunters U7', team2: 'Haki Black', result1: 0, result2: 0 },
-      { id: 7, time: '14:20', team1: 'Wolf', team2: 'Haki Blue', result1: 0, result2: 0 },
-      { id: 8, time: '15:10', team1: 'HIFK Red', team2: 'Haki Black', result1: 0, result2: 0 },
-      { id: 9, time: '15:50', team1: 'Wolf', team2: 'Haki Black', result1: 0, result2: 0 },
-      { id: 10, time: '15:50', team1: 'Haki Blue', team2: 'Hunters U7', result1: 0, result2: 0 },
-    ]
-  });
+  const [games, setGames] = useState({});
+  const [editingGameId, setEditingGameId] = useState(null); // Define editingGameId state
+  const [editedResults, setEditedResults] = useState({});
 
   const [teams] = useState({
     u8lohkoa: ["Wolf Musta", "Salamat White", "Hunters Blue", "HJK Blue"],
@@ -41,30 +15,36 @@ const Lauantai = () => {
     u7: ["Wolf", "Haki Blue", "HIFK Red", "Haki Black", "Hunters U7"]
   });
 
-  const [editedResults, setEditedResults] = useState({});
-  const [editingGameId, setEditingGameId] = useState(null);
-
   useEffect(() => {
-    const storedGames = localStorage.getItem('lauantaiGames');
-    console.log(JSON.parse(storedGames)); // Log the contents of localStorage
-    if (storedGames) {
-      setGames(JSON.parse(storedGames));
-    }
+    const gamesRef = database.ref('games');
+
+    const fetchGames = async () => {
+      try {
+        const snapshot = await gamesRef.once('value');
+        const data = snapshot.val();
+        setGames(data);
+      } catch (error) {
+        console.error('Error fetching games:', error);
+      }
+    };
+
+    fetchGames();
+
+    // Clean up function
+    return () => {
+      gamesRef.off(); // Unsubscribe from Firebase Realtime Database
+    };
   }, []);
 
-  const handleUpdateResult = (groupId, gameId) => {
-    const editedResult1 = editedResults[`${groupId}-${gameId}-result1`] || 0;
-    const editedResult2 = editedResults[`${groupId}-${gameId}-result2`] || 0;
 
+  const handleUpdateResult = (groupId, gameId, editedResult1, editedResult2) => {
     const updatedGames = { ...games };
     const gameIndex = updatedGames[groupId].findIndex(game => game.id === gameId);
     if (gameIndex !== -1) {
       updatedGames[groupId][gameIndex].result1 = editedResult1;
       updatedGames[groupId][gameIndex].result2 = editedResult2;
-      localStorage.setItem('lauantaiGames', JSON.stringify(updatedGames));
+      database.ref('games').set(updatedGames); // Update Firebase database
     }
-
-    setEditingGameId(null);
   };
 
   const toggleEditing = (gameId) => {
@@ -161,8 +141,8 @@ const u8lohkoaTeams = calculateTeamStats("u8lohkoa");
   
 return (
   <div>
-    {Object.keys(games).map((groupId) => (
-      <div key={groupId}>
+    {games && Object.keys(games).map((groupId) => (
+        <div key={groupId}>
         <hr />
         <h2 className='group'>{formatGroupName(groupId)}</h2>
 
