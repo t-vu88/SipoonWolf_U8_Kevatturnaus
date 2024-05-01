@@ -1,20 +1,22 @@
 
 
+import { initializeApp } from "firebase/app"; // Import only the initializeApp function
 import { getDatabase } from "firebase/database"; // Import getDatabase function
-import 'firebase/database'; // Import database module separately
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyCYnXp1PcMrayTCWX9-D3KleFNRpCbKjig",
-    authDomain: "sipoonwolf-u8-kevatturnaus.firebaseapp.com",
-    projectId: "sipoonwolf-u8-kevatturnaus",
-    storageBucket: "sipoonwolf-u8-kevatturnaus.appspot.com",
-    messagingSenderId: "33000144522",
-    appId: "1:33000144522:web:f06071ce96a4e1887ff773",
-    measurementId: "G-MYC78848CJ"
-  };
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_AUTH_DOMAIN",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_STORAGE_BUCKET",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  appId: "YOUR_APP_ID",
+  measurementId: "YOUR_MEASUREMENT_ID"
+};
+
+// Initialize Firebase
+const firebaseApp = initializeApp(firebaseConfig);
 
 // Access Firebase Realtime Database
-export const database = getDatabase(); // Use getDatabase function to initialize the database
+export const database = getDatabase(firebaseApp); // Use getDatabase function to initialize the database
 
-// Now you can use the 'database' object to interact with your Firebase Realtime Database
